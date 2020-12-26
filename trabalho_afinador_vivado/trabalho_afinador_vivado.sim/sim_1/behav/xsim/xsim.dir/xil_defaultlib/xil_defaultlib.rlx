@@ -1,0 +1,12 @@
+0.6
+2018.3
+Dec  7 2018
+00:33:28
+D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/fft_tb.sv,1608582635,systemVerilog,,,,fft_tb,,,,,,,,
+D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/load_mem.sv,1608583023,systemVerilog,,D:/SSD Dados/Documents/Vivado/trabalho_afinador/sources/memory.sv,,load_mem,,,,,,,,
+D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/mem_test.sv,1608486508,systemVerilog,,,,mem_test,,,,,,,,
+D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/read_mem.sv,1608583707,systemVerilog,,D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/fft_tb.sv,,read_mem,,,,,,,,
+D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/teste.sv,1608581105,systemVerilog,,,,teste,,,,,,,,
+D:/SSD Dados/Documents/Vivado/trabalho_afinador/sources/fft.sv,1607805046,systemVerilog,,D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/fft_tb.sv,,fft,,,,,,,,
+D:/SSD Dados/Documents/Vivado/trabalho_afinador/sources/memory.sv,1608579618,systemVerilog,,D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/read_mem.sv,,mem,,,,,,,,
+D:/SSD Dados/Documents/Vivado/trabalho_afinador/trabalho_afinador_vivado/trabalho_afinador_vivado.sim/sim_1/behav/xsim/glbl.v,1544155481,verilog,,,,glbl,,,,,,,,
