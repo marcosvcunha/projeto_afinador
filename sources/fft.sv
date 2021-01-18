@@ -39,29 +39,6 @@ module fft #(
     reg [9:0] data_out;
     
     assign data_out_wire = data_out;
-
-    // assign idxCima_inv[0] = idxCima[9];
-    // assign idxCima_inv[1] = idxCima[8];
-    // assign idxCima_inv[2] = idxCima[7];
-    // assign idxCima_inv[3] = idxCima[6];
-    // assign idxCima_inv[4] = idxCima[5];
-    // assign idxCima_inv[5] = idxCima[4];
-    // assign idxCima_inv[6] = idxCima[3];
-    // assign idxCima_inv[7] = idxCima[2];
-    // assign idxCima_inv[8] = idxCima[1];
-    // assign idxCima_inv[9] = idxCima[0];
-
-    // assign idxBaixo_inv[0] = idxBaixo[9];
-    // assign idxBaixo_inv[1] = idxBaixo[8];
-    // assign idxBaixo_inv[2] = idxBaixo[7];
-    // assign idxBaixo_inv[3] = idxBaixo[6];
-    // assign idxBaixo_inv[4] = idxBaixo[5];
-    // assign idxBaixo_inv[5] = idxBaixo[4];
-    // assign idxBaixo_inv[6] = idxBaixo[3];
-    // assign idxBaixo_inv[7] = idxBaixo[2];
-    // assign idxBaixo_inv[8] = idxBaixo[1];
-    // assign idxBaixo_inv[9] = idxBaixo[0];
-
     
     reg signed [9:0] fftRC; // Número Real de Cima 
     reg signed [9:0] fftIC; // Número Imaginário de Cima

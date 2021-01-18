@@ -2,27 +2,21 @@
 module mem
 #(
     parameter NUM_BITS = 10,
-    parameter FFT_MEM_SIZE = 2048,
-    parameter SOUND_MEM_SIZE = 1024
+    parameter MEM_SIZE = 2048
 )(
     input bit clk,
+    input bit rst_n,
 
-    input bit fft_rst_n,
-    input bit fft_we,
-    input wire [10:0] fft_addr,
-    input reg [9:0] fft_data_in,
-    output wire [9:0] fft_data_out
+    input bit write_enable,
+    input wire [10:0] addr,
+    input reg [9:0] data_in,
+    output wire [9:0] data_out
 
-    // input bit sound_rst_n;
-    // input bit sound_we;
-    // input wire [10:0] sound_addr;
-    // input reg [9:0] sound_data_in;
-    // output wire [9:0] sound_data_out;
 );
 
     xpm_memory_spram #(
         // Common module parameters
-        .MEMORY_SIZE (FFT_MEM_SIZE*NUM_BITS), //positive integer
+        .MEMORY_SIZE (MEM_SIZE*NUM_BITS), //positive integer
         .MEMORY_PRIMITIVE ("auto"), //string; "auto", "distributed", "block" or "ultra";
         .MEMORY_INIT_FILE ("none"), //string; "none" or "<filename>.mem"
         .MEMORY_INIT_PARAM ("" ), //string;
@@ -42,18 +36,17 @@ module mem
         .sleep (1'b0),
         // Port A module ports
         .clka (clk),
-        .rsta (~fft_rst_n),
+        .rsta (~rst_n),
         .ena (1'b1),
         .regcea (1'b1),
-        .wea (fft_we),
-        .addra (fft_addr),
-        .dina (fft_data_in),
+        .wea (write_enable),
+        .addra (addr),
+        .dina (data_in),
         .injectsbiterra (1'b0), //do not change
         .injectdbiterra (1'b0), //do not change
-        .douta (fft_data_out),
+        .douta (data_out),
         .sbiterra (), //do not change
         .dbiterra () //do not change
     );
-
 
 endmodule

@@ -10,6 +10,7 @@ module fft_tb(
     reg [10:0] addr;
     reg [10:0] addr_load;
     reg [10:0] addr_fft;
+    reg [10:0] addr_store_mem;
     wire [9:0] data_out_load_mem;
     wire [9:0] data_out_fft;
     reg [9:0] data_in;
@@ -23,7 +24,10 @@ module fft_tb(
     bit do_fft;
     bit fft_done;
 
-    typedef enum {IDLE, LOAD_SOUND, DO_FFT, END} state_type;
+    bit do_store;
+    bit mem_stored;
+
+    typedef enum {IDLE, LOAD_SOUND, DO_FFT, STORE_MEM, END} state_type;
 
     state_type state;
 
@@ -42,11 +46,11 @@ module fft_tb(
 
     mem mem_inst(
         .clk(clk),
-        .fft_rst_n(rst_n),
-        .fft_we(write_enable),
-        .fft_addr(addr),
-        .fft_data_in(data_in),
-        .fft_data_out(data_out)
+        .rst_n(rst_n),
+        .write_enable(write_enable),
+        .addr(addr),
+        .data_in(data_in),
+        .data_out(data_out)
     );
 
     fft fft_inst(
@@ -58,6 +62,14 @@ module fft_tb(
         .data_out_wire(data_out_fft),
         .do_fft(do_fft),
         .fft_done(fft_done)
+    );
+
+    store_mem store_mem_inst(
+        .clk(clk),
+        .addr(addr_store_mem),
+        .data_in(data_out),
+        .do_store(do_store),
+        .mem_stored(mem_stored)
     );
 
 
@@ -85,6 +97,9 @@ module fft_tb(
             write_enable <= fft_write_enable;
             addr <= addr_fft;
             data_in <= data_out_fft;
+        end else if(do_store == 1) begin
+            addr <= addr_store_mem;
+            
         end else begin
             write_enable <= 0;
             data_in <= 0;
@@ -99,6 +114,7 @@ module fft_tb(
             write_enable <= 0;
             read_enable <= 0;
             do_fft <= 0;
+            do_store <= 0;
         end else begin
             case(state)
                 IDLE:
@@ -118,6 +134,18 @@ module fft_tb(
                         if(fft_done == 0) begin
                             do_fft <= 1;
                         end else begin
+                            state <= STORE_MEM;
+                            do_store <= 1;
+                            do_fft <= 0;
+                            write_enable <= 0;
+                        end
+                    end
+                STORE_MEM:
+                    begin
+                        if(mem_stored == 0) begin
+                            state <= STORE_MEM;
+                        end else begin
+                            do_store <= 0;
                             state <= END;
                         end
                     end
