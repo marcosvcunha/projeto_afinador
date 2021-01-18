@@ -4,12 +4,12 @@ module find_freq(
     input bit enable,
     output bit did_find,
     output reg [10:0] mem_addr,
-    input reg signed [9:0] data_in,
+    input reg signed [9:0] data_in
 );
-    typedef enum {IDLE, START, SET_ADDR, READ_MEM_R, READ_MEM_I, SUM, IS_GREATER, INCREMENT_INDEX, END} state_type;
+    typedef enum {IDLE, START, SET_ADDR, WAIT_DATA1, READ_MEM_R, WAIT_DATA2, READ_MEM_I, SUM, IS_GREATER, INCREMENT_INDEX, END} state_type;
     state_type state;
 
-    reg [9:0] index;
+    reg [10:0] index;
     reg signed [9:0] num_r;
     reg signed [9:0] num_i;
     reg [9:0] sum;
@@ -38,24 +38,37 @@ module find_freq(
                     end
                 end
                 SET_ADDR: begin
-                    if(index < 1024) begin
+                    if(index < 512) begin
                         mem_addr <= index;                        
-                        state <= READ_MEM_R;
+                        state <= WAIT_DATA1;
                     end else begin
                         state <= END;
                     end
                 end
+                WAIT_DATA1:
+                    state <= READ_MEM_R;
                 READ_MEM_R: begin
                     num_r <= data_in;
                     mem_addr <= index + 1024;
-                    state <= READ_MEM_I;
+                    state <= WAIT_DATA2;
                 end
+                WAIT_DATA2:
+                    state <= READ_MEM_I;
                 READ_MEM_I: begin
                     num_i <= data_in;
-                    state <= IS_GREATER;
+                    state <= SUM;
                 end
                 SUM: begin
-                    sum <= num_r[8:0] + num_i[8:0];
+                    if(num_r < 0 && num_i < 0) begin
+                        sum <= - num_r - num_i;
+                    end else if(num_r < 0 && num_i >= 0) begin
+                        sum <= - num_r + num_i;
+                    end else if(num_r >= 0 && num_i < 0) begin
+                        sum <= num_r - num_i;
+                    end else begin
+                        sum <= num_r + num_i;
+                    end
+                    state <= IS_GREATER;
                 end
                 IS_GREATER: begin
                     if(sum > greater_num) begin
