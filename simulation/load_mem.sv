@@ -32,7 +32,7 @@ module load_mem(
 
             if (line.len() > 0) begin
                 num = line.atoi();
-                data_out <= num;
+                data_out <= num * 250;
                 write_enable <= 1;
                 addr <= i_inv;
                 i <= i + 1;
@@ -48,7 +48,7 @@ module load_mem(
     initial begin
         data_loaded = 0;
         write_enable = 0;
-        fd = $fopen("e2.txt", "r");
+        fd = $fopen("A.txt", "r");
         if(fd) $display("File was opened successfully: %0d", fd);
         else   $display("File was NOT opened: %0d", fd);
 

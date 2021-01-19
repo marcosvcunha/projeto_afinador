@@ -4,7 +4,8 @@ module display_result(
     output [7:0] an,
     output [7:0] seg,
     input reg signed [9:0] num_to_display,
-    input reg [2:0] note
+    input reg [2:0] note,
+    input reg [2:0] current_state
     );
 
     typedef enum {DIGIT1, DIGIT2, DIGIT3, DIGIT4, DIGIT5, DIGIT6, DIGIT7, DIGIT8} digit_control_type;
@@ -55,6 +56,7 @@ module display_result(
                     state <= SIGN;
                     num_to_display_aux <= num_to_display;
                     display_note(note);
+                    seg5 <= to_seven_seg(current_state);
                 end
                 SIGN: begin
                     state <= CENTENA;
@@ -98,47 +100,47 @@ module display_result(
         case(this_note)
             3'h0: // MI
             begin
-                seg5 <= 8'b11111111;
+                // seg5 <= 8'b11111111;
                 seg6 <= 8'b11111111;
                 seg7 <= 8'b11111111;
                 seg8 <= 8'b01100001; // Letra E
             end
             3'h1: // L�?
             begin
-                seg5 <= 8'b11111111;
+                // seg5 <= 8'b11111111;
                 seg6 <= 8'b11111111;
                 seg7 <= 8'b11111111;
                 seg8 <= 8'b00010001; // Letra A
             end
             3'h2: begin// RÉ
-                seg5 <= 8'b11111111;
+                // seg5 <= 8'b11111111;
                 seg6 <= 8'b11111111;
                 seg7 <= 8'b11111111;
                 seg8 <= 8'b10000101;// Letra D
                 end
             3'h3: begin // SOL
-                seg5 <= 8'b11111111;
+                // seg5 <= 8'b11111111;
                 seg6 <= 8'b01001001; // Letra S
                 seg7 <= 8'b00000011; // Letra O
                 seg8 <= 8'b11100011;
                end
             3'h4: // SI
             begin
-                seg5 <= 8'b11111111;
+                // seg5 <= 8'b11111111;
                 seg6 <= 8'b11111111;
                 seg7 <= 8'b11111111;
                 seg8 <= 8'b11000001; // Letra B
             end
             3'h5: // MI
             begin
-                seg5 <= 8'b11111111;
+                // seg5 <= 8'b11111111;
                 seg6 <= 8'b11111111;
                 seg7 <= 8'b11111111;
                 seg8 <= 8'b01100001; // Letra E
             end
             default:
                 begin
-                    seg5 <= 8'b11111111;
+                    // seg5 <= 8'b11111111;
                     seg6 <= 8'b11111111;
                     seg7 <= 8'b11111111;
                     seg8 <= 8'b11111111;

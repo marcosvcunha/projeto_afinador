@@ -98,9 +98,11 @@ module fft #(
                         write_enable <= 0;
                     end
                 START: begin
-                    // TODO: puxar a entrada para a parte da memória relativa a parte real da transformada
-                    LOOP_1_Counter <= 10'd0;
-                    state <= LOOP_1;
+                    fft_done <= 0;
+                    if(do_fft == 1) begin
+                        LOOP_1_Counter <= 10'd0;                        
+                        state <= LOOP_1;
+                    end
                 end
                 LOOP_1:
                     if(LOOP_1_Counter == 4'd10) begin
@@ -251,7 +253,7 @@ module fft #(
                     end
                 END:
                     begin
-                        state <= END;                        
+                        state <= START;                        
                         fft_done <= 1;
                     end
                 default:

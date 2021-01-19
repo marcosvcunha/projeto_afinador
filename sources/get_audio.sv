@@ -54,7 +54,7 @@ module get_audio(
                     index <= 0;
                 end
                 LOOP1:begin
-                    if(count < 10000)begin
+                    if(count < 1000)begin
                         count <= count + 1;
                     end else begin
                         count <= 0;
@@ -74,7 +74,7 @@ module get_audio(
                     end
                 STORE_DATA: begin
                     write_enable <= 1;
-                    data_out <= dataRead;
+                    data_out <= dataRead * 200;
                     mem_addr <= index_inv;
                     state <= INCREMENT_INDEX;
                 end
@@ -89,10 +89,6 @@ module get_audio(
                 end
             endcase
         end
-    end
-    initial begin
-        #20
-        rst_n <= 1;
     end
 
 endmodule
