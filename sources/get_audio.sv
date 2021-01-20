@@ -13,7 +13,7 @@ module get_audio(
 
     reg [10:0] index;
     wire [9:0] index_inv;
-    reg [16:0] count; // Amostra o som a cada 10k ciclos de 1,024 MHz
+    reg [32:0] count; // Amostra o som a cada 10k ciclos de 1,024 MHz
     reg [9:0] dataRead;
     
     state_type state;
@@ -29,11 +29,10 @@ module get_audio(
     assign index_inv[8] = index[1];
     assign index_inv[9] = index[0];
 
-
+    assign micLRSEL = 0;
 
     always @(posedge clk) begin
         if(rst_n == 0) begin
-            micLRSel <= 0;
             count <= 0;
             state <= IDLE;
             dataRead <= 0;
@@ -54,7 +53,7 @@ module get_audio(
                     index <= 0;
                 end
                 LOOP1:begin
-                    if(count < 1000)begin
+                    if(count < 1000) begin// < 1000)begin
                         count <= count + 1;
                     end else begin
                         count <= 0;

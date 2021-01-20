@@ -12,7 +12,7 @@ module top_module(
     
 
     // Estado
-    reg [2:0] current_state = 0;
+    // reg [2:0] current_state = 0;
 
     // Sinais memória
     bit write_enable = 0;
@@ -104,13 +104,13 @@ module top_module(
                     // state_to_display <= 0; 
                 end
                 START: begin
-                    current_state <= 0;
+                    // current_state <= 0;
                     mem_rst_n <= 0;
                     // state_to_display <= 0;
                     state <= GET_AUDIO;
                 end
                 GET_AUDIO: begin
-                    current_state <= 1;
+                    // current_state <= 1;
                     if(did_get_audio == 0) begin
                         do_get_audio <= 1;
                         state <= GET_AUDIO;
@@ -120,7 +120,7 @@ module top_module(
                     end
                 end
                 DO_FFT: begin
-                    current_state <= 2;
+                    // current_state <= 2;
                     if(fft_done == 0) begin
                         do_fft <= 1;
                         state <= DO_FFT;
@@ -130,7 +130,7 @@ module top_module(
                     end
                 end
                 FIND_FREQ: begin
-                    current_state <= 3;
+                    // current_state <= 3;
                     if(did_find_freq == 0) begin
                         find_freq_enable <= 1;
                         state <= FIND_FREQ;
@@ -197,7 +197,7 @@ module top_module(
         .seg(seg),
         .num_to_display(difference_to_note),
         .note(note),
-        .current_state(current_state)
+        // .current_state(current_state)
     );
 
 endmodule
