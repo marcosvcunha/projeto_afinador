@@ -14,7 +14,8 @@ module get_audio(
     reg [10:0] index;
     wire [9:0] index_inv;
     reg [32:0] count; // Amostra o som a cada 10k ciclos de 1,024 MHz
-    reg [9:0] dataRead;
+    reg signed [10:0] micSum;
+    bit dataRead;
     
     state_type state;
     
@@ -28,6 +29,7 @@ module get_audio(
     assign index_inv[7] = index[2];
     assign index_inv[8] = index[1];
     assign index_inv[9] = index[0];
+    assign index_inv[10] = 0;
 
     assign micLRSEL = 0;
 
@@ -42,19 +44,21 @@ module get_audio(
             case(state)
                 IDLE:begin
                     did_get_audio <= 0;
-                    if(do_get_audio == 1)
-                        state <= START;
-                    else
-                        state <= IDLE;
+                    state <= START;
                 end
                 START:begin
-                    state <= LOOP1;
-                    count <= 0;
-                    index <= 0;
+                    if(do_get_audio == 1)begin
+                        state <= LOOP1;
+                        micSum <= 0;
+                        count <= 0;
+                        index <= 0;
+                    end else
+                        state <= START;
                 end
                 LOOP1:begin
-                    if(count < 1000) begin// < 1000)begin
+                    if(count < 973) begin
                         count <= count + 1;
+                        micSum <= micSum + micData;
                     end else begin
                         count <= 0;
                         state <= LOOP2;
@@ -73,14 +77,20 @@ module get_audio(
                     end
                 STORE_DATA: begin
                     write_enable <= 1;
-                    data_out <= dataRead * 200;
-                    mem_addr <= index_inv;
+                    data_out[9:0] <= micSum[10:1];
+                    // if(dataRead == 0) begin
+                    //     data_out <= 0;
+                    // end else begin
+                    //     data_out <= 200;                        
+                    // end
+                    mem_addr <=  index_inv;
                     state <= INCREMENT_INDEX;
                 end
                 INCREMENT_INDEX:begin
                     write_enable <= 0;
                     index <= index + 1;
-                    state <= LOOP1;                    
+                    state <= LOOP1;
+                    micSum <= 0;             
                 end
                 END:begin
                     did_get_audio <= 1;

@@ -86,7 +86,7 @@ module fft #(
 
 
     always @(posedge clk) begin
-        if(rst_n == 0 || do_fft == 0) begin
+        if(rst_n == 0) begin
             state <= IDLE;
             fft_done <= 0;
             write_enable <= 0;
@@ -253,7 +253,7 @@ module fft #(
                     end
                 END:
                     begin
-                        state <= START;                        
+                        state <= IDLE;                        
                         fft_done <= 1;
                     end
                 default:

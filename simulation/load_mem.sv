@@ -7,8 +7,8 @@ module load_mem(
     output bit data_loaded
 );
     int fd;
-    reg [9:0] i = 0;
-    wire [9:0] i_inv;
+    reg [10:0] i = 0;
+    wire [10:0] i_inv;
     string line;
     int num;
     reg [9:0] data_out;
@@ -24,6 +24,7 @@ module load_mem(
     assign i_inv[7] = i[2];
     assign i_inv[8] = i[1];
     assign i_inv[9] = i[0];
+    assign i_inv[10] = 0;
 
 
     always @(posedge clk) begin
@@ -32,7 +33,13 @@ module load_mem(
 
             if (line.len() > 0) begin
                 num = line.atoi();
-                data_out <= num * 250;
+                //if(num == 0) begin
+                //    data_out <= 0;
+                //end else begin
+                //    data_out <= 200;
+                //end
+                data_out <= num;
+                //data_out <= num * 50;
                 write_enable <= 1;
                 addr <= i_inv;
                 i <= i + 1;
@@ -48,7 +55,7 @@ module load_mem(
     initial begin
         data_loaded = 0;
         write_enable = 0;
-        fd = $fopen("A.txt", "r");
+        fd = $fopen("data_in.txt", "r");
         if(fd) $display("File was opened successfully: %0d", fd);
         else   $display("File was NOT opened: %0d", fd);
 

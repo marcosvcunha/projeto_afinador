@@ -4,14 +4,12 @@ module teste(
 
 );
     bit clk = 0;
-    reg signed [9:0] a = -22;
-    reg signed [9:0] b = -24;
-    reg signed [9:0] sum = 0;
+    reg [7:0] a = 8'b10010000;
+    reg signed [9:0] b = 10'b1100000000;
 
     initial begin
         #10
-        sum = a + b;
+        b[9:0] <= a[7:0];
     end
-
 
 endmodule

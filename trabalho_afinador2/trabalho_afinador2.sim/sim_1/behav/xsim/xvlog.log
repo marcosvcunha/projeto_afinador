@@ -1,0 +1,10 @@
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/SSD Dados/Documents/Vivado/trabalho_afinador/sources/fft.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fft
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/SSD Dados/Documents/Vivado/trabalho_afinador/sources/find_freq.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module find_freq
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/load_mem.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module load_mem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/SSD Dados/Documents/Vivado/trabalho_afinador/sources/memory.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module mem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "D:/SSD Dados/Documents/Vivado/trabalho_afinador/simulation/fft_tb.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fft_tb

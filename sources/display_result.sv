@@ -4,8 +4,8 @@ module display_result(
     output [7:0] an,
     output [7:0] seg,
     input reg signed [9:0] num_to_display,
-    input reg [2:0] note
-    // input reg [2:0] current_state // DEBUG
+    input reg [2:0] note,
+    input reg [2:0] current_state // DEBUG
     );
 
     typedef enum {DIGIT1, DIGIT2, DIGIT3, DIGIT4, DIGIT5, DIGIT6, DIGIT7, DIGIT8} digit_control_type;
@@ -56,11 +56,11 @@ module display_result(
                     state <= SIGN;
                     num_to_display_aux <= num_to_display;
                     display_note(note);
-                    // seg5 <= to_seven_seg(current_state); // DEBUG
+                    seg5 <= to_seven_seg(current_state); // DEBUG
                 end
                 SIGN: begin
                     state <= CENTENA;
-                    if(num_to_display_aux < 0) begin
+                    if(num_to_display_aux[9] == 1) begin
                         num_to_display_aux <= - num_to_display_aux;
                         seg1 <= 8'b11111101;                    
                     end else begin

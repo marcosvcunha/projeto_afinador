@@ -12,19 +12,19 @@ module find_freq(
         FIND_NOTE, END} state_type;
     state_type state;
 
-    const bit [9:0] freqs[0:5] = {165, 110, 147, 196, 247, 330};
+    const bit signed [9:0] freqs[0:5] = {165, 110, 147, 196, 247, 330};
     reg [2:0] idx_note;
     reg signed [9:0] difference_aux;
 
     reg [10:0] index;
     reg signed [9:0] num_r;
     reg signed [9:0] num_i;
-    reg [9:0] sum;
-    reg [9:0] greater_num;
+    reg signed [10:0] sum;
+    reg [10:0] greater_num;
     reg [9:0] greater_index;
 
     function reg[9:0] abs(reg[9:0] num);
-        if(num < 0) begin
+        if(num[9] == 1) begin
             abs = -num;
         end else begin
             abs = num;
@@ -35,20 +35,23 @@ module find_freq(
         if(rst_n == 0) begin
             state <= IDLE;
             did_find <= 0;
+            difference <= 511;
         end else begin
             case(state)
                 IDLE: begin
                     state <= START;
+                    did_find <= 0;
+                    state <= START;
                 end
                 START: begin
-                    did_find <= 0;
-                    index <= 1; // Começa em 1 mesmo por que o 0 sempre tem o maior valor (na versão binaria)
-                    num_r <= 0;
-                    num_i <= 0;
-                    sum <= 0;
-                    greater_num <= 0;
-                    greater_index <= 0;
                     if(enable == 1) begin
+                        did_find <= 0;
+                        index <= 20; // Começa em 1 mesmo por que o 0 sempre tem o maior valor (na versão binaria)
+                        num_r <= 0;
+                        num_i <= 0;
+                        sum <= 0;
+                        greater_num <= 0;
+                        greater_index <= 20;
                         state <= SET_ADDR;
                     end else begin
                         state <= START;
@@ -79,15 +82,7 @@ module find_freq(
                     state <= SUM;
                 end
                 SUM: begin
-                    if(num_r < 0 && num_i < 0) begin
-                        sum <= - num_r - num_i;
-                    end else if(num_r < 0 && num_i >= 0) begin
-                        sum <= - num_r + num_i;
-                    end else if(num_r >= 0 && num_i < 0) begin
-                        sum <= num_r - num_i;
-                    end else begin
-                        sum <= num_r + num_i;
-                    end
+                    sum <= abs(num_r) + abs(num_i);
                     state <= IS_GREATER;
                 end
                 IS_GREATER: begin
@@ -102,9 +97,10 @@ module find_freq(
                     state <= SET_ADDR;
                 end
                 FIND_NOTE: begin
+                    // difference <= greater_index;
                     if(idx_note < 6) begin
                         if(abs(difference) > abs(greater_index - freqs[idx_note])) begin
-                            difference <= greater_index - freqs[idx_note];
+                            difference <= freqs[idx_note] - greater_index;
                             note <= idx_note;
                         end
                         idx_note = idx_note + 1;
@@ -113,7 +109,7 @@ module find_freq(
                 end
                 END: begin
                     did_find <= 1;
-                    state <= START;
+                    state <= IDLE;
                 end
             endcase
         end
