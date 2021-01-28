@@ -3,12 +3,12 @@ module top_module(
     input rst_n,
     output [7:0] an,
     output [7:0] seg,
-    output micLRSEL,
+    output micLRSel,
     input micData,
     output mic_clk,
     output tx // Para Serial Transmitter
 );
-    typedef enum {IDLE, START, GET_AUDIO, READ_MEM, WAIT_MEM, SEND_REQ, WAIT_ACK_1, WAIT_ACK_0, DO_FFT, FIND_FREQ, END} state_type;
+    typedef enum {IDLE, START, GET_AUDIO, DO_FFT, FIND_FREQ, END} state_type;
     state_type state;
     
 
@@ -31,6 +31,13 @@ module top_module(
     // micLRSEL
     // micData
 
+    // Sinais Get Audio
+    bit write_enable_get_audio;
+    reg [10:0] addr_get_audio;
+    reg [9:0] data_out_get_audio;
+    bit req_get_audio = 0;
+    bit ack_get_audio;
+
     // Sinais fft
     reg [10:0] addr_fft;
     bit write_enable_fft;
@@ -49,17 +56,17 @@ module top_module(
     // an
     // seg
 
-    // Sinais Serial Transmitter
-    reg [10:0] mem_index;
-    reg [7:0] tx_data;
-    bit tx_req = 0;
-    bit tx_ack;
+    // // Sinais Serial Transmitter
+    // reg [10:0] mem_index;
+    // reg [7:0] tx_data;
+    // bit tx_req = 0;
+    // bit tx_ack;
 
     // CLK de aproximadamente 1,024 MHz
     // bit sclk = 0;
     bit clk = 0;
     reg [7:0] counter = 0;
-    assign mic_clk = clk;
+    // assign mic_clk = clk;
 
     always @(posedge clk_100) begin
         if(counter < 51) begin
@@ -94,21 +101,6 @@ module top_module(
                 write_enable <= 0;
                 data_out <= 0;
             end
-            READ_MEM: begin
-                addr <= mem_index;
-                write_enable <= 0;
-                data_out <= 0;
-            end
-            WAIT_MEM: begin
-                addr <= mem_index;
-                write_enable <= 0;
-                data_out <= 0;
-            end
-            SEND_REQ: begin
-                addr <= mem_index;
-                write_enable <= 0;
-                data_out <= 0;
-            end
             default: begin
                 addr <= 0;
                 write_enable <= 0;
@@ -119,7 +111,7 @@ module top_module(
 
     // Maquina de Estados
 
-    always @(posedge clk) begin
+    always @(posedge clk_100) begin
         if(rst_n == 0) begin
             state <= IDLE;
             // state_to_display <= 0;
@@ -138,46 +130,12 @@ module top_module(
                 end
                 GET_AUDIO: begin
                     current_state <= 1;
-                    if(did_get_audio == 0) begin
+                    if(~did_get_audio) begin
                         do_get_audio <= 1;
                         state <= GET_AUDIO;
                     end else begin
                         do_get_audio <= 0;
-                        state <= READ_MEM;
-                        mem_index <= 0;
-                    end
-                end
-                READ_MEM: begin
-                    if(mem_index < 1024) begin
-                        state <= WAIT_MEM;
-                    end else begin
                         state <= DO_FFT;
-                    end
-                end
-                WAIT_MEM: begin
-                    state <= SEND_REQ;
-                end
-                SEND_REQ: begin
-                    if(data_in == 200) begin
-                        tx_data <= 200;
-                    end else if(data_in == 0) begin
-                        tx_data <= 0;
-                    end else begin
-                        tx_data <= 100;
-                    end
-                    tx_req <= 1;
-                    state <= WAIT_ACK_1;
-                end
-                WAIT_ACK_1: begin
-                    if(tx_ack) begin
-                        state <= WAIT_ACK_0;
-                        tx_req <= 0;
-                    end
-                end
-                WAIT_ACK_0: begin
-                    if(~tx_ack) begin
-                        state <= READ_MEM;
-                        mem_index <= mem_index + 1;
                     end
                 end
                 DO_FFT: begin
@@ -208,31 +166,45 @@ module top_module(
         end
     end
 
-    serial_transmitter #(
-        .CLK_FREQ(1_000_000)
-    )serial_transmitter_inst(
-        .clk(clk),
-        .rst_n(rst_n),
-        .tx(tx),
-        .req(tx_req),
-        .data(tx_data),
-        .ack(tx_ack)
-    );
+    // serial_transmitter #(
+    //     .CLK_FREQ(1_000_000)
+    // )serial_transmitter_inst(
+    //     .clk(clk_100),
+    //     .rst_n(rst_n),
+    //     .tx(tx),
+    //     .req(tx_req),
+    //     .data(tx_data),
+    //     .ack(tx_ack)
+    // );
 
-    get_audio get_audio_inst(
-        .clk(clk),
+    // get_audio get_audio_inst(
+    //     .clk(clk),
+    //     .rst_n(rst_n),
+    //     .write_enable(write_enable_get_audio),
+    //     .mem_addr(addr_get_audio),
+    //     .data_out(data_out_get_audio),
+    //     .do_get_audio(do_get_audio),
+    //     .did_get_audio(did_get_audio),
+    //     .micLRSel(micLRSel),
+    //     .micData(micData)
+    // );
+
+    get_audio2 get_audio2_inst(
+        .clk_100(clk_100),
         .rst_n(rst_n),
         .write_enable(write_enable_get_audio),
-        .mem_addr(addr_get_audio),
+        .addr(addr_get_audio),
         .data_out(data_out_get_audio),
-        .do_get_audio(do_get_audio),
-        .did_get_audio(did_get_audio),
-        .micLRSel(micLRSel),
-        .micData(micData)
+        .req(do_get_audio),
+        .did_get(did_get_audio),
+        .micClk(mic_clk),
+        .micData(micData),
+        .micLRSel(micLRSel)
     );
 
+
     mem memory_inst(
-        .clk(clk),
+        .clk(clk_100),
         .rst_n(mem_rst_n),
         .write_enable(write_enable),
         .addr(addr),
@@ -241,7 +213,7 @@ module top_module(
     );
 
     find_freq find_freq_inst(
-        .clk(clk),
+        .clk(clk_100),
         .rst_n(rst_n),
         .enable(find_freq_enable),
         .did_find(did_find_freq),
@@ -252,7 +224,7 @@ module top_module(
     );
 
     fft fft_inst(
-        .clk(clk),
+        .clk(clk_100),
         .rst_n(rst_n),
         .addr(addr_fft),
         .write_enable(write_enable_fft),

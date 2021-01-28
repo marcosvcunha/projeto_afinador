@@ -15,6 +15,7 @@ module get_audio2(
     state_type state;
 
     reg [10:0] index;
+    reg [10:0] index_inv;
     reg [16:0] counter;
 
     bit data_mic_valid;
@@ -22,6 +23,20 @@ module get_audio2(
     reg [15:0] last_data;
     bit pdm_data_o;
     bit pdm_en_o;
+
+
+    assign index_inv[0] = index[9];
+    assign index_inv[1] = index[8];
+    assign index_inv[2] = index[7];
+    assign index_inv[3] = index[6];
+    assign index_inv[4] = index[5];
+    assign index_inv[5] = index[4];
+    assign index_inv[6] = index[3];
+    assign index_inv[7] = index[2];
+    assign index_inv[8] = index[1];
+    assign index_inv[9] = index[0];
+    assign index_inv[10] = 0;
+
 
     always @(posedge clk_100) begin
         if(data_mic_valid) begin
@@ -49,7 +64,7 @@ module get_audio2(
                     end else begin
                         data_out[9:0] <= last_data[10:3];
                         write_enable <= 1;
-                        addr <= index;
+                        addr <= index_inv;
                         state <= INCREMENT_INDEX;
                     end
                 end

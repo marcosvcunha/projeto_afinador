@@ -56,7 +56,7 @@ module display_result(
                     state <= SIGN;
                     num_to_display_aux <= num_to_display;
                     display_note(note);
-                    seg5 <= to_seven_seg(current_state); // DEBUG
+                    // seg5 <= to_seven_seg(current_state); // DEBUG
                 end
                 SIGN: begin
                     state <= CENTENA;

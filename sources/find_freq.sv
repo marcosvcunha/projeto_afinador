@@ -58,7 +58,7 @@ module find_freq(
                     end
                 end
                 SET_ADDR: begin
-                    if(index < 512) begin
+                    if(index < 350) begin
                         mem_addr <= index;                        
                         state <= WAIT_DATA1;
                     end else begin
